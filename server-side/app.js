@@ -2,13 +2,13 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const dbConfig = require("./config/dbConfig");
-const qrRoutes = require("./routes/qrRoutes");
+const routes = require("./routes");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api", qrRoutes);
+app.use("/api", routes);
 
 mongoose
   .connect(dbConfig.MONGO_URI, {
