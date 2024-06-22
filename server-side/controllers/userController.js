@@ -10,7 +10,7 @@ exports.signup = async (req, res) => {
     const user = new User({ username, email, password: hashedPassword });
     await user.save();
     const token = jwt.sign({ id: user._id }, "tattqr", {
-      expiresIn: "1h",
+      expiresIn: "24h",
     });
     res.status(200).send({ message: "User Created SuccessFully", status: 200 });
   } catch (error) {
@@ -31,7 +31,7 @@ exports.login = async (req, res) => {
       return res.status(400).send({ message: "Invalid credentials" });
     }
     const token = jwt.sign({ id: user._id }, "tattqr", {
-      expiresIn: "1h",
+      expiresIn: "24h",
     });
     res.status(200).send({ token, message: "User LoggedIn Successfully" });
   } catch (error) {

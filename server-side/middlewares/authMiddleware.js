@@ -1,13 +1,17 @@
 const jwt = require("jsonwebtoken");
-const { UserModel } = require("../models");
-const { logger } = require("../utils/logger");
-require("dotenv").config();
+const { UserModel } = require("../models/Index");
+// const { ObjectId } = require("mongodb"); // Import ObjectId
+const mongoose = require("mongoose");
+// const { logger } = require("../utils/logger");
+// require("dotenv").config();
 
 const authenticate = async (req, res, next) => {
-  // logger().info("tokenHeader", req.headers);
+  // console.log("tokenHeader", req.headers);
   const tokenHeader =
     req.headers["authorization"] || req.headers["Authorization"];
   const token = tokenHeader && tokenHeader.split(" ")[1];
+
+  // console.log("token is", token);
 
   if (!token) {
     return res
@@ -16,14 +20,19 @@ const authenticate = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, "your_secret_key");
-    // logger().info("Decoded Token:", decoded);
+    const decoded = jwt.verify(token, "tattqr");
+    console.log("Decoded Token:", decoded);
+    var userId = new mongoose.Types.ObjectId(decoded.id);
+
+    // console.log("user id is", userId);
 
     const user = await UserModel.findOne({
-      _id: decoded.id,
-      enable: true,
-      deleted: false,
+      _id: userId,
+      // enable: true,
+      // deleted: false,
     });
+
+    // console.log("user is", user);
 
     if (!user) {
       return res
@@ -33,15 +42,13 @@ const authenticate = async (req, res, next) => {
 
     req.user = {
       id: user._id,
-      // userName: user.userName,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      userName: user.userName,
       email: user.email,
-      role: user.role,
+      qrCode: user.qrCode,
     };
     next();
   } catch (error) {
-    logger().error("Error in authentication middleware:", error);
+    console.error("Error in authentication middleware:", error);
     return res.status(401).json({ error: "Unauthorized: Invalid token" });
   }
 };

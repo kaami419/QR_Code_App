@@ -15,6 +15,11 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  qrCode: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "QRCode",
+    required: false,
+  },
 });
 
 const User = mongoose.model("User", UserSchema);
